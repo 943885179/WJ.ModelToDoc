@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetCore.NPOI" Version="1.2.2" />
+    <PackageReference Include="DotNetZip" Version="1.13.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -19,6 +20,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="Spire.Office" Version="4.11.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

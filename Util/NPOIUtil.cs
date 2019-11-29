@@ -84,17 +84,19 @@ namespace WJ.ModelToDoc.Util
             }
             #endregion
             if (dto.IsRead)
-            {
+            {// 直接下载，不做保存
                 var ms = new MemoryStream();
                 doc.Write(ms);
                 return ms;
             }
             else
-            {
-                string docPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "DocxWord");
-                if (!Directory.Exists(docPath)) { Directory.CreateDirectory(docPath); }
-                string fileName = string.Format("{0}.doc", HttpUtility.UrlEncode(dto.WordName + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff"), System.Text.Encoding.UTF8));
-                var path = Path.Combine(docPath, fileName);
+            {//下载到文件夹中
+             // string docPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "DocxWord");
+             // if (!Directory.Exists(docPath)) { Directory.CreateDirectory(docPath); }
+             // string fileName = string.Format("{0}.doc", HttpUtility.UrlEncode(dto.WordName + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff"), System.Text.Encoding.UTF8));
+             // var path = Path.Combine(docPath, fileName);
+                if (!Directory.Exists(dto.FilePath)) { Directory.CreateDirectory(dto.FilePath); }
+                var path = Path.Combine(dto.FilePath, dto.WordName + ".doc");
                 FileStream out1 = new FileStream(path, FileMode.Create);
                 doc.Write(out1);
                 out1.Close();

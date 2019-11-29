@@ -8,13 +8,9 @@ using System.Threading.Tasks;
 namespace WJ.ModelToDoc.model
 {
     [Table("User")]
-    public class User
+    public class User: Entity
     {
         public TableModel table { get; set; }
-        [Key]
-        [Column("Word")]
-        [Display(Name = "Word")]
-        public int Id { get; set; }
 
         public decimal? reportAmount { get; set; }
 
@@ -37,5 +33,12 @@ namespace WJ.ModelToDoc.model
         }
         [DataType(DataType.Date)]
         public DateTime MyProperty { get; set; }
+    }
+    public class Entity {
+
+        [Key]
+        [Column("Word")]
+        [Display(Name = "Word")]
+        public int Id { get; set; }
     }
 }

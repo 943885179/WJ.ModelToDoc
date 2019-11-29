@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -13,6 +14,10 @@ namespace WJ.ModelToDoc.Dto
         /// </summary>
         public string Paths { get; set; }
         /// <summary>
+        /// 上传Dll,多个
+        /// </summary>
+        public IFormFileCollection Files { get; set; }
+        /// <summary>
         /// word名称
         /// </summary>
         public string WordName { get; set; }
@@ -20,6 +25,10 @@ namespace WJ.ModelToDoc.Dto
         /// 是否为预览模式
         /// </summary>
         public bool IsRead { get; set; } = false;
+        /// <summary>
+        /// 存放路径
+        /// </summary>
+        public string FilePath { get; set; }
 
         //ToDo mzj 注解
     }
