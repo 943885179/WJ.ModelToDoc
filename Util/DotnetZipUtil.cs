@@ -32,7 +32,8 @@ namespace WJ.ModelToDoc.Util
         /// <param name="savePath"></param>
         public static void UnZip(string zipPath,string savePath)
         {
-            using (var zip=ZipFile.Read(zipPath))
+
+            using (var zip=ZipFile.Read(zipPath,new ReadOptions() { Encoding=Encoding.UTF8}))
             {
                 foreach (ZipEntry entry in zip)
                 {
@@ -165,7 +166,8 @@ namespace WJ.ModelToDoc.Util
             try
             {
                 ReadOptions options = new ReadOptions();
-                options.Encoding = Encoding.Default;//设置编码，解决解压文件时中文乱码
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                options.Encoding =Encoding.GetEncoding("GB2312");//设置编码，解决解压文件时中文乱码
                 using (ZipFile zip = ZipFile.Read(strZipPath, options))
                 {
                     foreach (ZipEntry entry in zip)

@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WJ.ModelToDoc</name>
+    </assembly>
+    <members>
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.CreateDicByDLL(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            本地本机生成字典(好像文件不能以zip上传，有空再研究)
+            </summary>
+            <param name="file">压缩包，必须要zip文件</param>
+            <param name="wordName">导出word名称</param>
+            <param name="fromDlls">需要解析的dll(使用压缩包里的路径);比如 ：bin\sms.bll 或debug\sms.bll </param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.CreateDicByDLLS(System.String,System.String,Microsoft.AspNetCore.Http.IFormFileCollection,System.String,System.String)">
+            <summary>
+            本地本机生成字典
+            </summary>
+            <param name="wordName"></param>
+            <param name="fromDlls"></param>
+            <param name="files"></param>
+            <param name="defalutKey"></param>
+            <param name="dicJson"></param>
+            <returns></returns>
+        </member>
+        <member name="P:WJ.ModelToDoc.Dto.RequestDto.Paths">
+            <summary>
+            dll地址，用";"分割多个dll
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Dto.RequestDto.Files">
+            <summary>
+            上传Dll,多个
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Dto.RequestDto.WordName">
+            <summary>
+            word名称
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Dto.RequestDto.IsRead">
+            <summary>
+            是否为预览模式
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Dto.RequestDto.FilePath">
+            <summary>
+            存放路径
+            </summary>
+        </member>
+        <member name="T:WJ.ModelToDoc.model.ColumnModel">
+            <summary>
+            列名描述
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.ColumnModel.Name">
+            <summary>
+            字段名
+            读取ColumnAttribute的Name属性，没有则读取自身
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.ColumnModel.Display">
+            <summary>
+            字段描述
+            读取DisplayAttribute的Name属性,没有读取空
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.ColumnModel.Type">
+            <summary>
+            字段类型
+            读取字段的类型
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.ColumnModel.IsKey">
+            <summary>
+            是否为主键
+            读取KeyAttribute，存在则为主键
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.ColumnModel.IsRequire">
+            <summary>
+            是否强制
+            读取RequiredAttribute，存在则强制
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.ColumnModel.MinLength">
+            <summary>
+            最少长度
+            读取MinLengthAttribute或者StringLengthAttribute
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.ColumnModel.MaxLength">
+            <summary>
+            最大长度
+            读取MinLengthAttribute或者StringLengthAttribute
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.TableModel.Name">
+            <summary>
+            表名
+            读取TableAttribute属性，如果没有则读取自身实体名称
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.TableModel.Display">
+            <summary>
+            表描述
+            读取DisplayAttribute属性，如果没有则读取空
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.model.TableModel.ColumnModels">
+            <summary>
+            字段
+            </summary>
+        </member>
+        <member name="T:WJ.ModelToDoc.Util.DotnetZipUtil">
+            <summary>
+            DotnetZip压缩工具类
+            </summary>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.DotnetZipUtil.Zip(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+            压缩
+            </summary>
+            <param name="files"></param>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.DotnetZipUtil.UnZip(System.String,System.String)">
+            <summary>
+            解压
+            </summary>
+            <param name="zipPath"></param>
+            <param name="savePath"></param>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.DotnetZipUtil.ZipCompress(System.IO.Stream,System.String)">
+            <summary>
+            得到指定的输入流的ZIP压缩流对象【原有流对象不会改变】
+            </summary>
+            <param name="sourceStream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.DotnetZipUtil.ZipDecompress(System.Byte[])">
+            <summary>
+            得到指定的字节数组的ZIP解压流对象
+            当前方法仅适用于只有一个压缩文件的压缩包，即方法内只取压缩包中的第一个压缩文件
+            </summary>
+            <param name="sourceStream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.DotnetZipUtil.CompressMulti(System.Collections.Generic.List{System.String},System.String,System.Boolean)">
+            <summary>
+            压缩ZIP文件
+            支持多文件和多目录，或是多文件和多目录一起压缩
+            </summary>
+            <param name="list">待压缩的文件或目录集合</param>
+            <param name="strZipName">压缩后的文件名</param>
+            <param name="IsDirStruct">是否按目录结构压缩</param>
+            <returns>成功：true/失败：false</returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.DotnetZipUtil.Decompression(System.String,System.String,System.Boolean)">
+            <summary>
+            解压ZIP文件
+            </summary>
+            <param name="strZipPath">待解压的ZIP文件</param>
+            <param name="strUnZipPath">解压的目录</param>
+            <param name="overWrite">是否覆盖</param>
+            <returns>成功：true/失败：false</returns>
+        </member>
+        <member name="T:WJ.ModelToDoc.Util.EntityUtil">
+            <summary>
+            实体生成数据类别工具类(存在一个问题就是不能重复加载相同的dll)
+            </summary>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.GetDicByPath(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            获取数据json
+            主键生成规则（有IsKey注解、符合默认主键属性、符合主键对应关系字段）
+            </summary>
+            <param name="paths">解析的dll</param>
+            <param name="defalutKey">默认主键,多个使用;分割</param>
+            <param name="dic">主键对应关系表，《表名，主键名(多个主键用;分割)》</param>
+            <returns></returns>
+        </member>
+        <member name="P:WJ.ModelToDoc.Util.LoadUtil._AssemblyLoadContext">
+            <summary>
+            核心程序集加载
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Util.LoadUtil._Assembly">
+            <summary>
+            获取程序集
+            </summary>
+        </member>
+        <member name="F:WJ.ModelToDoc.Util.LoadUtil.filePath">
+            <summary>
+            文件地址
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Util.LoadUtil.resolver">
+            <summary>
+            指定位置的插件库集合
+            </summary>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.NPOIUtil.SetCellText(NPOI.XWPF.UserModel.XWPFDocument,NPOI.XWPF.UserModel.XWPFTable,System.String)">
+            <summary>
+                设置字体格式
+            </summary>
+            <param name="doc"></param>
+            <param name="table"></param>
+            <param name="setText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.NPOIUtil.SetCellText(NPOI.XWPF.UserModel.XWPFDocument,NPOI.XWPF.UserModel.XWPFTable,System.String,NPOI.XWPF.UserModel.ParagraphAlignment,System.Int32)">
+            <summary>
+                设置单元格格式
+            </summary>
+            <param name="doc">doc对象</param>
+            <param name="table">表格对象</param>
+            <param name="setText">要填充的文字</param>
+            <param name="align">文字对齐方式</param>
+            <param name="textPos">rows行的高度</param>
+            <returns></returns>
+        </member>
+        <member name="T:WJ.ModelToDoc.Util.SharpZipUtil">
+            <summary>
+            SharpZipLib压缩文件
+            </summary>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.SharpZipUtil.Zip(System.String,System.String,System.Int32)">
+            <summary>
+            压缩文件zip
+            </summary>
+            <param name="srcFile"></param>
+            <param name="DstFile"></param>
+            <param name="bufferSize"></param>
+        </member>
+        <member name="T:WJ.ModelToDoc.Util.SprireDocUtil">
+            <summary>
+            sprire 试用版会加水印，正式发布来说不合适
+            </summary>
+        </member>
+    </members>
+</doc>

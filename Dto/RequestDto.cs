@@ -9,6 +9,7 @@ namespace WJ.ModelToDoc.Dto
 {
     public class RequestDto
     {
+        public string Fromdlls { get; set; }
         /// <summary>
         /// dll地址，用";"分割多个dll
         /// </summary>
@@ -17,6 +18,7 @@ namespace WJ.ModelToDoc.Dto
         /// 上传Dll,多个
         /// </summary>
         public IFormFileCollection Files { get; set; }
+        public IFormFile File { get; set; }
         /// <summary>
         /// word名称
         /// </summary>
@@ -29,6 +31,9 @@ namespace WJ.ModelToDoc.Dto
         /// 存放路径
         /// </summary>
         public string FilePath { get; set; }
+
+        public string DefaulteId { get; set; }
+        public Dictionary<string,string> Dic { get; set; }
 
         //ToDo mzj 注解
     }
