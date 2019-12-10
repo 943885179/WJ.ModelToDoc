@@ -4,24 +4,11 @@
         <name>WJ.ModelToDoc</name>
     </assembly>
     <members>
-        <member name="M:WJ.ModelToDoc.Controllers.DicController.CreateDicByDLL(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
-            <summary>
-            本地本机生成字典(好像文件不能以zip上传，有空再研究)
-            </summary>
-            <param name="file">压缩包，必须要zip文件</param>
-            <param name="wordName">导出word名称</param>
-            <param name="fromDlls">需要解析的dll(使用压缩包里的路径);比如 ：bin\sms.bll 或debug\sms.bll </param>
-            <returns></returns>
-        </member>
-        <member name="M:WJ.ModelToDoc.Controllers.DicController.CreateDicByDLLS(System.String,System.String,Microsoft.AspNetCore.Http.IFormFileCollection,System.String,System.String)">
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.CreateDicByDLL(Microsoft.AspNetCore.Http.IFormFileCollection,System.String)">
             <summary>
             本地本机生成字典
             </summary>
-            <param name="wordName"></param>
-            <param name="fromDlls"></param>
-            <param name="files"></param>
-            <param name="defalutKey"></param>
-            <param name="dicJson"></param>
+            <param name="dto"></param>
             <returns></returns>
         </member>
         <member name="P:WJ.ModelToDoc.Dto.RequestDto.Paths">
