@@ -32,9 +32,7 @@ namespace WJ.ModelToDoc.Dto
         /// </summary>
         public string FilePath { get; set; }
 
-        public string DefaulteId { get; set; }
+        public string DefalutKey { get; set; }
         public Dictionary<string,string> Dic { get; set; }
-
-        //ToDo mzj 注解
     }
 }

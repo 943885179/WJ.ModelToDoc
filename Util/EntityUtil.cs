@@ -18,7 +18,7 @@ namespace WJ.ModelToDoc.Util
     /// </summary>
     public class EntityUtil
     {
-        protected EntityUtil() 
+        protected EntityUtil()
         {
         }
         /// <summary>
@@ -89,12 +89,16 @@ namespace WJ.ModelToDoc.Util
                     Name = type.Name,
                     ColumnModels = new List<ColumnModel>()
                 };
+                if (type.Name=="XD_ApplyTaxAttach")
+                {
+                    var ss = "sss";
+                }
                 var upName = tab.Name.ToUpper();
                 if (dic.Any(o=>o.Key== upName))
                 {
                     defalutKey = dic[upName];
                 }
-
+                var x = type.GetCustomAttributes();
                 //是否有TableAttribute，有则读取为表名
                 var tabNameAtrris = type.GetCustomAttributes(typeof(TableAttribute), false);
                 foreach (TableAttribute tabNameAtrri in tabNameAtrris)
@@ -151,10 +155,10 @@ namespace WJ.ModelToDoc.Util
                     {//IsGenericType，是否是泛型,泛型只接受可空标识，其他类型List和ICollection 一律排除
                         continue;
                     }
-                    else if (propertyType.IsClass)
-                    {//排除引入的类字段
-                        continue;
-                    }
+                    // else if (propertyType.IsClass)
+                    // {//排除引入的类字段
+                    //     continue;
+                    // }
                     else if (propertyType.IsEnum)
                     {//排除引入的类字段
                      //var emums = propertyType.GetEnumNames();
@@ -176,7 +180,7 @@ namespace WJ.ModelToDoc.Util
                             }
                             sb.AppendLine(emumStr);
                         }
-                        column.Display += "\t\n\n\n" + sb.ToString();
+                        column.Display += sb.ToString();
                     }
                     else { }
                     //读取字段主键
