@@ -4,12 +4,51 @@
         <name>WJ.ModelToDoc</name>
     </assembly>
     <members>
-        <member name="M:WJ.ModelToDoc.Controllers.DicController.CreateDicByDLL(Microsoft.AspNetCore.Http.IFormFileCollection,System.String)">
+        <member name="T:WJ.ModelToDoc.Controllers.DicController">
             <summary>
-            本地本机生成字典
+            字段生成Api
             </summary>
-            <param name="dto"></param>
+        </member>
+        <member name="F:WJ.ModelToDoc.Controllers.DicController._environment">
+            <summary>
+            Asp.net Core程序的基本环境信息
+            </summary>
+        </member>
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="environment"></param>
+        </member>
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.CreateDicByDLL(Microsoft.AspNetCore.Http.IFormFileCollection,System.String,System.String,System.String,System.String)">
+            <summary>
+            上传文件解析成数据字典
+            </summary>
+            <param name="files">批量文件</param>
+            <param name="wordName">字典名称</param>
+            <param name="fromdlls">从哪几个dll中找数据实体，用";"分开</param>
+            <param name="defalutKey">默认主键（全局，用";"分开</param>
+            <param name="keyJson">特殊主键声明</param>
             <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.UpLoadFilesIsTrue(Microsoft.AspNetCore.Http.IFormFileCollection)">
+            <summary>
+            上传文件校验
+            </summary>
+            <param name="files"></param>
+        </member>
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.SaveUploadFiles(Microsoft.AspNetCore.Http.IFormFileCollection,System.String)">
+            <summary>
+            保存文件
+            </summary>
+            <param name="files"></param>
+            <param name="path"></param>
+        </member>
+        <member name="M:WJ.ModelToDoc.Controllers.DicController.RemoveFile(System.String)">
+            <summary>
+            删除系统文件夹下的所有文件
+            </summary>
+            <param name="path"></param>
         </member>
         <member name="P:WJ.ModelToDoc.Dto.RequestDto.Paths">
             <summary>
@@ -26,14 +65,19 @@
             word名称
             </summary>
         </member>
-        <member name="P:WJ.ModelToDoc.Dto.RequestDto.IsRead">
-            <summary>
-            是否为预览模式
-            </summary>
-        </member>
         <member name="P:WJ.ModelToDoc.Dto.RequestDto.FilePath">
             <summary>
             存放路径
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Dto.RequestDto.DefalutKey">
+            <summary>
+            全局默认主键
+            </summary>
+        </member>
+        <member name="P:WJ.ModelToDoc.Dto.RequestDto.tableKeys">
+            <summary>
+            主键表对照
             </summary>
         </member>
         <member name="T:WJ.ModelToDoc.model.ColumnModel">
@@ -164,7 +208,81 @@
             </summary>
             <param name="paths">解析的dll</param>
             <param name="defalutKey">默认主键,多个使用;分割</param>
-            <param name="dic">主键对应关系表，《表名，主键名(多个主键用;分割)》</param>
+            <param name="keyDic"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.GetTable(System.Type,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            读取表信息
+            </summary>
+            <param name="type"></param>
+            <param name="defalutKey"></param>
+            <param name="keyDic"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.GetCol(System.Reflection.PropertyInfo,System.String)">
+            <summary>
+            读取具体字段信息
+            </summary>
+            <param name="col"></param>
+            <param name="defalutKey"></param>
+            <param name="keyDic"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.TableAttributeName(System.Type)">
+            <summary>
+            读取TableAttribute的name;
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.DisplayAttributeName(System.Type)">
+            <summary>
+            读取DisplayAttribute的name;
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.DescriptAttributeName(System.Type)">
+            <summary>
+            读取DescriptionAttribute的Description;
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.TableAttributeName(System.Reflection.PropertyInfo)">
+            <summary>
+            读取TableAttribute的name;
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.DisplayAttributeName(System.Reflection.PropertyInfo)">
+            <summary>
+            读取DisplayAttribute的name;
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.DescriptAttributeName(System.Reflection.PropertyInfo)">
+            <summary>
+            读取DescriptionAttribute的Description;
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.IsHaveKeyAttribute(System.Reflection.PropertyInfo)">
+            <summary>
+            读取KeyAttribute;
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WJ.ModelToDoc.Util.EntityUtil.ColumnAttributeName(System.Reflection.PropertyInfo)">
+            <summary>
+            读取ColumnAttribute的name;
+            </summary>
+            <param name="type"></param>
             <returns></returns>
         </member>
         <member name="P:WJ.ModelToDoc.Util.LoadUtil._AssemblyLoadContext">

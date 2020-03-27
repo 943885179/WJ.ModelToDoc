@@ -18,21 +18,21 @@ namespace WJ.ModelToDoc.Dto
         /// 上传Dll,多个
         /// </summary>
         public IFormFileCollection Files { get; set; }
-        public IFormFile File { get; set; }
         /// <summary>
         /// word名称
         /// </summary>
         public string WordName { get; set; }
         /// <summary>
-        /// 是否为预览模式
-        /// </summary>
-        public bool IsRead { get; set; } = false;
-        /// <summary>
         /// 存放路径
         /// </summary>
         public string FilePath { get; set; }
-
+        /// <summary>
+        /// 全局默认主键
+        /// </summary>
         public string DefalutKey { get; set; }
-        public Dictionary<string,string> Dic { get; set; }
+        /// <summary>
+        /// 主键表对照
+        /// </summary>
+        public Dictionary<string,string> tableKeys { get; set; }
     }
 }

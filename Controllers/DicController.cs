@@ -1,169 +1,108 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using WJ.ModelToDoc.Dto;
 using WJ.ModelToDoc.model;
 using WJ.ModelToDoc.Util;
+using System.Text.Json;
+using System.Linq;
+
 namespace WJ.ModelToDoc.Controllers
 {
+    /// <summary>
+    /// 字段生成Api
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class DicController : ControllerBase
     {
-        private static IHostingEnvironment _environment;
-        public DicController(IHostingEnvironment environment)
+        /// <summary>
+        /// Asp.net Core程序的基本环境信息
+        /// </summary>
+        private static IWebHostEnvironment _environment;
+        private static string _dllPath;
+        private static string _dicPath;
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="environment"></param>
+        public DicController(IWebHostEnvironment environment)
         {
             _environment = environment;
+            _dllPath = Path.Combine(_environment.WebRootPath, "dll");
+            _dicPath = Path.Combine(_environment.WebRootPath, "DicWord");
+
         }
         /// <summary>
-        /// 本地本机生成字典
+        /// 上传文件解析成数据字典
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="files">批量文件</param>
+        /// <param name="wordName">字典名称</param>
+        /// <param name="fromdlls">从哪几个dll中找数据实体，用";"分开</param>
+        /// <param name="defalutKey">默认主键（全局，用";"分开</param>
+        /// <param name="keyJson">特殊主键声明</param>
         /// <returns></returns>
         [HttpPost("CreateDicByDLL")]
-        public object CreateDicByDLL(IFormFileCollection files, string wordName)
+        public object CreateDicByDLL(IFormFileCollection files, [FromForm] string wordName, [FromForm] string fromdlls, [FromForm] string defalutKey, [FromForm] string keyJson)
         {
-            GC.Collect();
+            RemoveFile(_dllPath);
+            SaveUploadFiles(files, _dllPath);
+            UpLoadFilesIsTrue(files);
             var dto = new RequestDto()
             {
                 Files = files,
-                WordName = wordName,
+                FilePath = _dicPath,
+                WordName = wordName + ".doc",
+                DefalutKey = defalutKey.ToLower(),
+                tableKeys = JsonSerializer.Deserialize<Dictionary<string, string>>(keyJson.ToUpper())
             };
-            if (dto.Files == null || dto.Files.Count == 0)
-            {
-                return "请上传实体的dll";
-            }
-            var dllPath = Path.Combine(_environment.WebRootPath, "dll");
-            if (Directory.Exists(dllPath))
-            {
-                Directory.Delete(dllPath, true);
-            }
-            Directory.CreateDirectory(dllPath);
-            var pathList = new List<string>();
-            foreach (var file in dto.Files)
-            {
-                /* dto.Paths += Path.Combine(dllPath, file.FileName) + ";";
-                 using (FileStream fs = System.IO.File.Create(Path.Combine(dllPath,file.FileName)))
-                 {
-                     file.CopyTo(fs);
-                     fs.Flush();
-                 }*/
-                pathList.Add(file.FileName);
-            }
-            DotnetZipUtil.CompressMulti(pathList, Path.Combine(_environment.WebRootPath, "t1.zip"), true);
-            dto.FilePath = _environment.WebRootPath + "/DicWord";
-            //读取解析后的Json文件
-            var tabs = EntityUtil.GetDicByPath(dto.Paths);
+            fromdlls.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList().ForEach(d => dto.Paths += Path.Combine(_dllPath, d) + ";");
+            var tabs = EntityUtil.GetDicByPath(dto.Paths, dto.DefalutKey, dto.tableKeys);
             var result = NPOIUtil.CreateDicDocx(tabs, dto);
-            if (dto.IsRead)
-            {
-                var ms = result as System.IO.MemoryStream;
-                return File(ms.ToArray(), "application/msword");
-            }
-            return result;
+            return Ok(new { code = 200, msg = "成功", Url = this.Request.Scheme + "://" + this.Request.Host + "/DicWord/" + dto.WordName });
         }
-         [HttpPost("CreateDicByDLLs")]
-        public object CreateDicByDLLs(IFormFileCollection files,[FromForm] string wordName,[FromForm] string fromdlls,[FromForm] string defalutKey,[FromForm] string dicJson)
+        /// <summary>
+        /// 上传文件校验
+        /// </summary>
+        /// <param name="files"></param>
+        private void UpLoadFilesIsTrue(IFormFileCollection files)
         {
-            var dto = new RequestDto()
+            if (files == null || files.Count == 0)
             {
-                Files = files,
-                WordName = wordName,
-                DefalutKey=defalutKey,
-                Dic=JsonConvert.DeserializeObject<Dictionary<string,string>>(dicJson)
-            };
-            if (dto.Files == null || dto.Files.Count == 0)
-            {
-                return "请上传实体的dll";
+                throw new Exception("请上传实体的dll");
             }
-            var dllPath = Path.Combine(_environment.WebRootPath, "dll");
-            if (Directory.Exists(dllPath))
+        }
+        /// <summary>
+        /// 保存文件
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="path"></param>
+        private void SaveUploadFiles(IFormFileCollection files, string path)
+        {
+            foreach (var file in files)
             {
-                Directory.Delete(dllPath, true);
-            }
-            Directory.CreateDirectory(dllPath);
-            foreach (var file in dto.Files)
-            {
-                 using (FileStream fs = System.IO.File.Create(Path.Combine(dllPath,file.FileName)))
-                 {
-                     file.CopyTo(fs);
-                     fs.Flush();
-                 }
-            }
-            var sp = fromdlls.Split(";");
-            foreach (var item in sp)
-            {
-                if (!string.IsNullOrWhiteSpace(item))
+                using (FileStream fs = System.IO.File.Create(Path.Combine(path, file.FileName)))
                 {
-                    dto.Paths += Path.Combine(dllPath, item) + ";";
+                    file.CopyTo(fs);
+                    fs.Flush();
                 }
             }
-            dto.FilePath = _environment.WebRootPath + "/DicWord";
-            //读取解析后的Json文件
-            var tabs = EntityUtil.GetDicByPath(dto.Paths,defalutKey,dto.Dic);
-            var result = NPOIUtil.CreateDicDocx(tabs, dto);
-            if (dto.IsRead)
+        }
+        /// <summary>
+        /// 删除系统文件夹下的所有文件
+        /// </summary>
+        /// <param name="path"></param>
+        private void RemoveFile(string path)
+        {
+            if (Directory.Exists(path))
             {
-                var ms = result as System.IO.MemoryStream;
-                return File(ms.ToArray(), "application/msword");
+                Directory.Delete(path, true);
             }
-            return Ok(new { code = 200, msg = "成功", Url = this.Request.Scheme + "://" + this.Request.Host + "/DicWord/" + dto.WordName + ".doc" });
+            Directory.CreateDirectory(path);
         }
-        [HttpGet("CreateDicByDLL")]
-        public object CreateDicByDLL()
-        {
-            RequestDto dto = new RequestDto()
-            {
-                //Paths = @"F:\维加\xdsys-dy\XDSYS.Entity\bin\Debug\XDSYS.Entity.dll",
-                Paths = @"F:\维加\WJ.ModelToDoc\wwwroot\dll\XDSYS.Entity.dll",
-                IsRead = false,
-                WordName = "数据字典"
-            };
-            dto.FilePath = Path.Combine(_environment.WebRootPath, "DicWord");
-            //读取解析后的Json文件
-            var tabs = EntityUtil.GetDicByPath(dto.Paths);
-            var result = NPOIUtil.CreateDicDocx(tabs, dto);
-            if (dto.IsRead)
-            {
-                var ms = result as System.IO.MemoryStream;
-                return File(ms.ToArray(), "application/msword");
-            }
-            return Ok(new { code = 200, msg = "成功", Url = this.Request.Scheme + "://" + this.Request.Host + "/DicWord/" + dto.WordName + ".doc" });
-        }
-
-
-
-        [HttpGet("Zip")]
-        public string Zip()
-        {
-            // SharpZipUtil.Zip(@"F:\维加\xdsys-dy\XDSYS.Entity\bin\Debug\System.Net.Http.dll", @"F:\维加\xdsys-dy\XDSYS.Entity\bin\Debug\1.zip");
-            DotnetZipUtil.CompressMulti(new List<string>() { @"G:\SMS.dll" }, Path.Combine(_environment.WebRootPath, "t1.zip"), false);
-            return "压缩";
-        }
-
-        [HttpGet("UpZip")]
-        public string UpZip()
-        {
-            // SharpZipUtil.Zip(@"F:\维加\xdsys-dy\XDSYS.Entity\bin\Debug\System.Net.Http.dll", @"F:\维加\xdsys-dy\XDSYS.Entity\bin\Debug\1.zip");
-            DotnetZipUtil.UnZip(Path.Combine(_environment.WebRootPath, "t1.zip"), Path.Combine(_environment.WebRootPath, "dll"));
-            return "解压";
-        }
-
-        //[HttpGet("Test")]
-        //public string GetDicTest()
-        //{
-        //    var type = typeof(User);
-        //    var tabs= EntityUtil.GetTable(type);
-
-        //    var t = new List<TableModel>();
-        //    t.Add(tabs);
-        //    return null;
-        //    //return NPOIUtil.CreateDicDocx(t, "aaa");
-        //}
-
     }
 }

@@ -30,6 +30,21 @@ namespace WJ.ModelToDoc.Util
             titleRun.SetText(dto.WordName);
             titleRun.FontSize = 20;
             titleRun.SetFontFamily("黑体", FontCharRange.None);
+            //表索引生成
+            var tabCardTitle = doc.CreateTable(tables.Count + 1, 2);
+            tabCardTitle.Width = 5000;
+            tabCardTitle.SetColumnWidth(0, 1000);
+            tabCardTitle.SetColumnWidth(1, 4000);
+            tabCardTitle.GetRow(0).GetCell(0).SetText("英文名");
+            tabCardTitle.GetRow(0).GetCell(1).SetText("中文名");
+            var tilteIndex = 0;
+            foreach (var tab in tables)
+            {
+                tilteIndex++;
+                // 添加表描述
+                tabCardTitle.GetRow(tilteIndex).GetCell(0).SetText(tab.Name);
+                tabCardTitle.GetRow(tilteIndex).GetCell(1).SetText(string.IsNullOrEmpty(tab.Display) ? "" : tab.Display);
+            }
             // 添加表
             var tabIndex = 0;
             foreach (var tab in tables)
@@ -39,18 +54,18 @@ namespace WJ.ModelToDoc.Util
                 p2.Alignment = ParagraphAlignment.LEFT;
                 var run1 = p2.CreateRun();
                 run1.IsBold = false;
-                run1.SetText(tabIndex+"."+tab.Name);
+                run1.SetText(tabIndex + "." + tab.Name);
                 run1.FontSize = 16;
                 run1.SetFontFamily("宋体", FontCharRange.None);
                 // 添加表描述
-                var tabCard = doc.CreateTable(2,2);
+                var tabCard = doc.CreateTable(2, 2);
                 tabCard.Width = 5000;
                 tabCard.SetColumnWidth(0, 1000);
-                tabCard.SetColumnWidth(1,4000);
+                tabCard.SetColumnWidth(1, 4000);
                 tabCard.GetRow(0).GetCell(0).SetText("表名");
                 tabCard.GetRow(0).GetCell(1).SetText(tab.Name);
                 tabCard.GetRow(1).GetCell(0).SetText("描述");
-                tabCard.GetRow(1).GetCell(1).SetText(string.IsNullOrEmpty(tab.Display)?"": tab.Display);
+                tabCard.GetRow(1).GetCell(1).SetText(string.IsNullOrEmpty(tab.Display) ? "" : tab.Display);
                 //添加列
                 var row = tab.ColumnModels.Count + 1;
                 var p3 = doc.CreateParagraph();
@@ -63,45 +78,32 @@ namespace WJ.ModelToDoc.Util
                 colCard.SetColumnWidth(4, 500);
                 colCard.SetColumnWidth(5, 500);
                 colCard.SetColumnWidth(6, 500);
-                colCard.GetRow(0).GetCell(0).SetParagraph(SetCellText(doc,colCard,"名称"));
-                colCard.GetRow(0).GetCell(1).SetParagraph(SetCellText(doc,colCard,"描述"));
-                colCard.GetRow(0).GetCell(2).SetParagraph(SetCellText(doc,colCard,"类型"));
-                colCard.GetRow(0).GetCell(3).SetParagraph(SetCellText(doc,colCard,"是否为主键"));
-                colCard.GetRow(0).GetCell(4).SetParagraph(SetCellText(doc,colCard,"是否强制"));
-                colCard.GetRow(0).GetCell(5).SetParagraph(SetCellText(doc,colCard,"最小长度"));
+                colCard.GetRow(0).GetCell(0).SetParagraph(SetCellText(doc, colCard, "名称"));
+                colCard.GetRow(0).GetCell(1).SetParagraph(SetCellText(doc, colCard, "描述"));
+                colCard.GetRow(0).GetCell(2).SetParagraph(SetCellText(doc, colCard, "类型"));
+                colCard.GetRow(0).GetCell(3).SetParagraph(SetCellText(doc, colCard, "是否为主键"));
+                colCard.GetRow(0).GetCell(4).SetParagraph(SetCellText(doc, colCard, "是否强制"));
+                colCard.GetRow(0).GetCell(5).SetParagraph(SetCellText(doc, colCard, "最小长度"));
                 colCard.GetRow(0).GetCell(6).SetParagraph(SetCellText(doc, colCard, "最大长度"));
                 for (int i = 0; i < tab.ColumnModels.Count; i++)
                 {
                     var col = tab.ColumnModels[i];
-                   colCard.GetRow(i+1).GetCell(0).SetParagraph(SetCellText(doc,colCard,col.Name));
-                   colCard.GetRow(i+1).GetCell(1).SetParagraph(SetCellText(doc,colCard, string.IsNullOrEmpty(col.Display) ? "" : col.Display));
-                   colCard.GetRow(i+1).GetCell(2).SetParagraph(SetCellText(doc,colCard,col.Type));
-                   colCard.GetRow(i+1).GetCell(3).SetParagraph(SetCellText(doc,colCard,col.IsKey?"是":"否"));
-                   colCard.GetRow(i+1).GetCell(4).SetParagraph(SetCellText(doc,colCard,col.IsRequire?"是":"否"));
-                   colCard.GetRow(i+1).GetCell(5).SetParagraph(SetCellText(doc,colCard,col.MinLength == 0 ? "" : col.MinLength.ToString()));
-                   colCard.GetRow(i+1).GetCell(6).SetParagraph(SetCellText(doc, colCard, col.MaxLength==0?"":col.MaxLength.ToString()));
+                    colCard.GetRow(i + 1).GetCell(0).SetParagraph(SetCellText(doc, colCard, col.Name));
+                    colCard.GetRow(i + 1).GetCell(1).SetParagraph(SetCellText(doc, colCard, string.IsNullOrEmpty(col.Display) ? "" : col.Display));
+                    colCard.GetRow(i + 1).GetCell(2).SetParagraph(SetCellText(doc, colCard, col.Type));
+                    colCard.GetRow(i + 1).GetCell(3).SetParagraph(SetCellText(doc, colCard, col.IsKey ? "是" : "否"));
+                    colCard.GetRow(i + 1).GetCell(4).SetParagraph(SetCellText(doc, colCard, col.IsRequire ? "是" : "否"));
+                    colCard.GetRow(i + 1).GetCell(5).SetParagraph(SetCellText(doc, colCard, col.MinLength == 0 ? "" : col.MinLength.ToString()));
+                    colCard.GetRow(i + 1).GetCell(6).SetParagraph(SetCellText(doc, colCard, col.MaxLength == 0 ? "" : col.MaxLength.ToString()));
                 }
             }
             #endregion
-            if (dto.IsRead)
-            {// 直接下载，不做保存
-                var ms = new MemoryStream();
-                doc.Write(ms);
-                return ms;
-            }
-            else
-            {//下载到文件夹中
-             // string docPath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "DocxWord");
-             // if (!Directory.Exists(docPath)) { Directory.CreateDirectory(docPath); }
-             // string fileName = string.Format("{0}.doc", HttpUtility.UrlEncode(dto.WordName + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff"), System.Text.Encoding.UTF8));
-             // var path = Path.Combine(docPath, fileName);
-                if (!Directory.Exists(dto.FilePath)) { Directory.CreateDirectory(dto.FilePath); }
-                var path = Path.Combine(dto.FilePath, dto.WordName + ".doc");
-                FileStream out1 = new FileStream(path, FileMode.Create);
-                doc.Write(out1);
-                out1.Close();
-                return path;
-            }
+            if (!Directory.Exists(dto.FilePath)) { Directory.CreateDirectory(dto.FilePath); }
+            var path = Path.Combine(dto.FilePath, dto.WordName + ".doc");
+            FileStream out1 = new FileStream(path, FileMode.Create);
+            doc.Write(out1);
+            out1.Close();
+            return path;
         }
         public static string CreateDoc()
         {
@@ -150,7 +152,6 @@ namespace WJ.ModelToDoc.Util
             var pCell = new XWPFParagraph(para, table.Body);
             pCell.Alignment = ParagraphAlignment.CENTER; //字体居中
             pCell.VerticalAlignment = TextAlignment.CENTER; //字体居中
-
             var r1c1 = pCell.CreateRun();
             r1c1.SetText(setText);
             r1c1.FontSize = 12;
@@ -174,7 +175,6 @@ namespace WJ.ModelToDoc.Util
             var pCell = new XWPFParagraph(para, table.Body);
             //pCell.Alignment = ParagraphAlignment.LEFT;//字体
             pCell.Alignment = align;
-
             var r1c1 = pCell.CreateRun();
             r1c1.SetText(setText);
             r1c1.FontSize = 12;
@@ -183,5 +183,5 @@ namespace WJ.ModelToDoc.Util
 
             return pCell;
         }
-}
+    }
 }
